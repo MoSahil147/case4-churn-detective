@@ -2,7 +2,6 @@
 
 **Live demo:** https://huggingface.co/spaces/sahil147/churn-detective  
 **Repo:** https://github.com/MoSahil147/case4-churn-detective  
-**Demo video:** (recording locally, link to be added)
 
 ## What this is
 
