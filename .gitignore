@@ -1,0 +1,7 @@
+.env
+.DS_Store
+.venv/
+uv.lock
+main.py
+outputs/shap_values.pkl
+outputs/figures/segments_scatter.html
