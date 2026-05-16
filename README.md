@@ -5,6 +5,8 @@
 
 ## See it in action
 
+**Demo video:** https://youtu.be/9B7frSfVOyE?si=047qDYOWkKD_jZSb
+
 ![App walkthrough](demo.gif)
 
 ## What this is
