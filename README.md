@@ -3,6 +3,10 @@
 **Live demo:** https://huggingface.co/spaces/sahil147/churn-detective  
 **Repo:** https://github.com/MoSahil147/case4-churn-detective  
 
+## See it in action
+
+![App walkthrough](demo.gif)
+
 ## What this is
 
 A mid-sized telecom is losing postpaid customers at 2.3% per month against a 1.5% industry benchmark and the CMO needs to know who is about to leave and why before signing off on a retention budget. This project builds an XGBoost churn predictor, explains every prediction with SHAP and groups at-risk customers into three actionable segments so the retention team knows exactly what offer to send to whom.
