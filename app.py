@@ -35,12 +35,12 @@ def build_encoders(_df):
     # Re-fit a LabelEncoder per categorical column using the same dataset as the notebook
     # This ensures user input on the Predict page gets encoded the exact same way as training data
     # The underscore prefix on _df tells Streamlit not to hash this argument (DataFrames aren't hashable)
-    cat_cols = _df.select_dtypes(include="str").columns.tolist()
+    cat_cols = _df.select_dtypes(include="str").columns.tolist() # finding the columns which have str
     cat_cols = [c for c in cat_cols if c != "customer_id"]  # customer_id is not a feature
     encoders = {}
     for col in cat_cols:
         le = LabelEncoder()
-        le.fit(_df[col])        # learn all possible category values for this column
+        le.fit(_df[col])        # learn all possible category values for this column, the underscore before tells not to hash the DF
         encoders[col] = le
     return encoders
 
@@ -58,7 +58,7 @@ MODEL_AUC  = 0.7226                 # XGBoost ROC-AUC from the notebook test set
 page = st.sidebar.radio(
     "Navigate",
     ["Overview", "EDA Explorer", "Predict", "Segments"],
-    index=0,
+    index=0, # default at Overview
 )
 
 # Each page is just an if/elif block — Streamlit re-runs the whole script every time
@@ -114,8 +114,11 @@ elif page == "EDA Explorer":
         # histnorm="probability density" normalises both groups so churners and retained
         # are directly comparable even though retained customers outnumber churners 2:1
         fig = px.histogram(
-            df, x=col, color=df["churned"].map({0: "Retained", 1: "Churned"}),
-            barmode="overlay", histnorm="probability density",
+            df, 
+            x=col, 
+            color=df["churned"].map({0: "Retained", 1: "Churned"}),
+            barmode="overlay", 
+            histnorm="probability density",
             color_discrete_map={"Retained": "#4CAF50", "Churned": "#F44336"},
             title=f"{col} distribution by churn status",
             labels={"color": "Status"},
@@ -126,7 +129,7 @@ elif page == "EDA Explorer":
         col = st.selectbox("Select categorical feature", cat_cols)
         # Calculate churn rate per category value, sort highest to lowest
         churn_by = df.groupby(col)["churned"].mean().reset_index()
-        churn_by.columns = [col, "churn_rate"]
+        churn_by.columns = [col, "churn_rate"] # renaming churned to churn_rate
         churn_by = churn_by.sort_values("churn_rate", ascending=False)
         fig = px.bar(
             churn_by, x=col, y="churn_rate",
@@ -136,7 +139,9 @@ elif page == "EDA Explorer":
             labels={"churn_rate": "Churn Rate"},
         )
         # Red dashed line shows the overall average so you can see which categories are above/below baseline
-        fig.add_hline(y=CHURN_RATE, line_dash="dash", line_color="red",
+        fig.add_hline(y=CHURN_RATE, 
+                      line_dash="dash", 
+                      line_color="red",
                       annotation_text=f"Avg {CHURN_RATE:.1%}")
         fig.update_yaxes(tickformat=".0%")
         st.plotly_chart(fig, use_container_width=True)
@@ -170,7 +175,7 @@ elif page == "Predict":
             contract_type     = st.selectbox("Contract type", ["Month-to-month", "One year", "Two year"])
             payment_method    = st.selectbox("Payment method", ["Electronic check", "Mailed check", "Bank transfer (auto)", "Credit card (auto)"])
             paperless_billing = st.selectbox("Paperless billing", ["Yes", "No"])
-            monthly_charges   = st.slider("Monthly charges ($)", 20.0, 120.0, 70.0, 1.0)
+            monthly_charges   = st.slider("Monthly charges ($)", 20.0, 120.0, 70.0, 1.0) # default at 70, 1 step move at a time
             tenure_months     = st.slider("Tenure (months)", 1, 72, 24)
 
         with c2:
@@ -221,7 +226,7 @@ elif page == "Predict":
             "plan_changes_6mo":  plan_changes_6mo,
         }
 
-        input_df = pd.DataFrame([raw])
+        input_df = pd.DataFrame([raw]) # building one row DF from users input similar to how in training data
 
         # Encode categorical text values to integers using the same encoders as training
         # e.g. "Month-to-month" → 0, "One year" → 1, "Two year" → 2
@@ -265,7 +270,7 @@ elif page == "Segments":
     st.markdown("5,505 predicted churners grouped into 3 actionable segments. Each needs a different retention play.")
 
     # Build a summary table: one row per segment with average feature values and size
-    summary = segments_df.groupby("segment_label").agg(
+    summary = segments_df.groupby("segment_label").agg( # agg calculates the 5 things at once per segment
         size=("segment_label", "count"),
         avg_charges=("monthly_charges", "mean"),
         avg_support=("support_calls_3mo", "mean"),
